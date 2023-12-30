@@ -8,7 +8,7 @@ import {
 } from "@chakra-ui/react"
 import { ColorModeSwitcher } from "./ColorModeSwitcher"
 import Home from './Home'
-import Test from './Test'
+// import Test from './Test'
 
 export const App = () => (
   <ChakraProvider theme={theme}>
