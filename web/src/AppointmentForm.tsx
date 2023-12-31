@@ -1,6 +1,6 @@
 // AppointmentForm.tsx
 
-import React, { useState } from 'react';
+import React, { useEffect } from "react";
 import {
   VStack,
   FormControl,
@@ -8,29 +8,53 @@ import {
   Input,
   Textarea,
   Button,
-  Box
-} from '@chakra-ui/react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+  Box,
+} from "@chakra-ui/react";
+// import DatePicker from 'react-datepicker';
+// import 'react-datepicker/dist/react-datepicker.css';
 
 const AppointmentForm: React.FC = () => {
-const [selectedDate, setSelectedDate] = useState(new Date());
+  // const [selectedDate, setSelectedDate] = useState(new Date());
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Add your appointment submission logic here
-    console.log('Appointment form submitted');
-  };
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   // Add your appointment submission logic here
+  //   console.log("Appointment form submitted");
+  // };
+
+  // const [data, setData] = useState("");
+
+  useEffect(() => {
+    (async function () {
+      const query = `
+      {
+        orders {
+          items {
+            id
+            Name
+          }
+        }
+      }`;
+      
+  const endpoint = "/data-api/graphql";
+  const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query: query })
+  });
+  const result = await response.json();
+  console.table(result.data.people.items);
+    })();
+  });
 
   return (
-    <VStack as="form" spacing={6} onSubmit={handleSubmit}>
+    <VStack w="400px">
       <FormControl>
-      <Box>
-        <FormLabel>Name</FormLabel>
-        <Input type="text" placeholder="Your name" />
+        <Box>
+          <FormLabel>Name</FormLabel>
+          <Input type="text" placeholder="Your name" />
         </Box>
       </FormControl>
-      
 
       <FormControl>
         <FormLabel>Email</FormLabel>
@@ -43,14 +67,15 @@ const [selectedDate, setSelectedDate] = useState(new Date());
       </FormControl>
 
       <FormControl>
-      <Box mt={6}>
-        <FormLabel>Address</FormLabel>
-        <Textarea placeholder="Enter your address" />
+        <Box mt={6}>
+          <FormLabel>Address</FormLabel>
+          <Textarea placeholder="Enter your address" />
         </Box>
       </FormControl>
 
-      <FormControl>
-        <FormLabel>Appointment Date and Time</FormLabel>
+      {/* <FormControl>
+      <Box mt={6}>
+        <FormLabel>Preferred appointment Date and Time</FormLabel>
         <DatePicker
           selected={selectedDate}
           onChange={(date: Date) => setSelectedDate(date as Date)}
@@ -59,7 +84,8 @@ const [selectedDate, setSelectedDate] = useState(new Date());
           timeIntervals={15}
           dateFormat="MMMM d, yyyy h:mm aa"
         />
-      </FormControl>
+         </Box>
+      </FormControl> */}
 
       <Button type="submit" colorScheme="teal">
         Schedule Appointment

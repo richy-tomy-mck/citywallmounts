@@ -14,7 +14,7 @@ import {
 
 function WMConfigurator() {
   return (
-    <VStack>
+    <VStack w="400px">
       <FormControl>
         <Box>
         <FormLabel>Number of TV's to be mounted</FormLabel>

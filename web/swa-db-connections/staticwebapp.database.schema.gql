@@ -1,0 +1,4 @@
+type Order @model {
+  id: String
+  Name: String
+}
