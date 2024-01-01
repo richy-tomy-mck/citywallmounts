@@ -1,4 +1,10 @@
 type Order @model {
   id: String
   Name: String
+  Address: String,
+  PhoneNumber: String,
+  Email: String,
+  WallMountType: String,
+  NumberOfTvs: Number,
+  WallMaterial: String,
 }
