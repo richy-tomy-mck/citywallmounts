@@ -5,6 +5,6 @@ type Order @model {
   PhoneNumber: String,
   Email: String,
   WallMountType: String,
-  NumberOfTvs: Number,
+  NumberOfTvs: Int,
   WallMaterial: String,
 }
