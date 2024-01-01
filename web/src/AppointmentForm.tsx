@@ -1,6 +1,6 @@
 // AppointmentForm.tsx
 
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import {
   VStack,
   FormControl,
@@ -9,85 +9,172 @@ import {
   Textarea,
   Button,
   Box,
+  Select,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
 } from "@chakra-ui/react";
-// import DatePicker from 'react-datepicker';
-// import 'react-datepicker/dist/react-datepicker.css';
+import { v4 as uuid } from "uuid";
 
 const AppointmentForm: React.FC = () => {
-  // const [selectedDate, setSelectedDate] = useState(new Date());
+  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
+  const [wallMountType, setWallMountType] = useState("");
+  const [wallMaterial, setwallMaterial] = useState("");
+  const [numberOfTvs, setnumberOfTvs] = useState(0);
 
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   // Add your appointment submission logic here
-  //   console.log("Appointment form submitted");
-  // };
+  async function handleScheduleAppointment() {
+    const data = {
+      id: uuid(),
+      Name: name,
+      Address: address,
+      PhoneNumber: phoneNumber,
+      Email: email,
+      WallMountType: wallMountType,
+      NumberOfTvs: numberOfTvs,
+      WallMaterial: wallMaterial,
+    };
 
-  // const [data, setData] = useState("");
+    console.log(data);
 
-  useEffect(() => {
-    (async function () {
-      const query = `
-      {
-        orders {
-          items {
-            id
-            Name
-          }
+    const gql = `
+      mutation create($item: CreateOrderInput!) {
+        createOrder(item: $item) {
+          id
+          Name
+          Address
+          PhoneNumber
+          Email
+          WallMountType
+          NumberOfTvs
+          WallMaterial
         }
       }`;
-      
-  const endpoint = "/data-api/graphql";
-  const response = await fetch(endpoint, {
+
+    const query = {
+      query: gql,
+      variables: {
+        item: data,
+      },
+    };
+
+    const endpoint = "/data-api/graphql";
+    const result = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query: query })
-  });
-  const result = await response.json();
-  console.table(result.data.people.items);
-    })();
-  });
+      body: JSON.stringify(query),
+    });
+
+    const response = await result.json();
+    console.table(response.data.createOrder);
+  }
 
   return (
-    <VStack w="400px">
+    <VStack w="300px">
+      <FormControl>
+        <Box>
+          <FormLabel>Number of TV's to be mounted</FormLabel>
+          <NumberInput
+            defaultValue={0}
+            min={0}
+            max={20}
+            value={numberOfTvs}
+            onChange={(ev) => setnumberOfTvs(Number(ev))}
+          >
+            <NumberInputField />
+            <NumberInputStepper>
+              <NumberIncrementStepper />
+              <NumberDecrementStepper />
+            </NumberInputStepper>
+          </NumberInput>
+          {/* It is important that the Label comes after the Control due to css selectors */}
+        </Box>
+      </FormControl>
+
+      <FormControl>
+        <Box mt={6}>
+          <FormLabel>Type of mount</FormLabel>
+          <Select
+            placeholder="Select type of mount"
+            value={wallMountType}
+            onChange={(ev) => setWallMountType(ev.target.value)}
+          >
+            <option value="fixed">Fixed Mount, flat against wall</option>
+            <option value="tilt">Tilt mount, angled down</option>
+            <option value="full-motion">Full motion mount</option>
+          </Select>
+          {/* It is important that the Label comes after the Control due to css selectors */}
+        </Box>
+      </FormControl>
+
+      <FormControl>
+        <Box mt={6}>
+          <FormLabel>Wall material</FormLabel>
+          <Select
+            placeholder="Select wall material"
+            value={wallMaterial}
+            onChange={(ev) => setwallMaterial(ev.target.value)}
+          >
+            <option value="drywall">Drywall</option>
+            <option value="brick-concrete">Brick or concrete</option>
+            <option value="not-sure">Not sure</option>
+          </Select>
+          {/* It is important that the Label comes after the Control due to css selectors */}
+        </Box>
+      </FormControl>
       <FormControl>
         <Box>
           <FormLabel>Name</FormLabel>
-          <Input type="text" placeholder="Your name" />
+          <Input
+            value={name}
+            type="text"
+            placeholder="Your name"
+            onChange={(ev) => setName(ev.target.value)}
+          />
         </Box>
       </FormControl>
 
       <FormControl>
         <FormLabel>Email</FormLabel>
-        <Input type="email" placeholder="Your email" />
+        <Input
+          value={email}
+          type="email"
+          placeholder="Your email"
+          onChange={(ev) => setEmail(ev.target.value)}
+        />
       </FormControl>
 
       <FormControl>
         <FormLabel>Phone Number</FormLabel>
-        <Input type="tel" placeholder="Your phone number" />
+        <Input
+          value={phoneNumber}
+          type="tel"
+          placeholder="Your phone number"
+          onChange={(ev) => setPhoneNumber(ev.target.value)}
+        />
       </FormControl>
 
       <FormControl>
         <Box mt={6}>
           <FormLabel>Address</FormLabel>
-          <Textarea placeholder="Enter your address" />
+          <Textarea
+            value={address}
+            placeholder="Enter your address"
+            onChange={(ev) => setAddress(ev.target.value)}
+          />
         </Box>
       </FormControl>
 
-      {/* <FormControl>
-      <Box mt={6}>
-        <FormLabel>Preferred appointment Date and Time</FormLabel>
-        <DatePicker
-          selected={selectedDate}
-          onChange={(date: Date) => setSelectedDate(date as Date)}
-          showTimeSelect
-          timeFormat="HH:mm"
-          timeIntervals={15}
-          dateFormat="MMMM d, yyyy h:mm aa"
-        />
-         </Box>
-      </FormControl> */}
-
-      <Button type="submit" colorScheme="teal">
+      <Button
+        type="submit"
+        colorScheme="teal"
+        mt={6}
+        onClick={handleScheduleAppointment}
+      >
         Schedule Appointment
       </Button>
     </VStack>
