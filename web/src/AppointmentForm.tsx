@@ -15,6 +15,11 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  CloseButton,
 } from "@chakra-ui/react";
 import { v4 as uuid } from "uuid";
 
@@ -26,6 +31,7 @@ const AppointmentForm: React.FC = () => {
   const [wallMountType, setWallMountType] = useState("");
   const [wallMaterial, setwallMaterial] = useState("");
   const [numberOfTvs, setnumberOfTvs] = useState(0);
+  const [status, setStatus] = useState(false);
 
   async function handleScheduleAppointment() {
     const data = {
@@ -71,10 +77,19 @@ const AppointmentForm: React.FC = () => {
 
     const response = await result.json();
     console.table(response.data.createOrder);
+    setStatus(true)
   }
 
   return (
     <VStack w="300px">
+      {status && <Alert status="success">
+        <AlertIcon />
+        <AlertTitle mr={2}>Success!</AlertTitle>
+        <AlertDescription>
+          Order confirmed!
+        </AlertDescription>
+        <CloseButton position="absolute" right="8px" top="8px" />
+      </Alert>}
       <FormControl>
         <Box>
           <FormLabel>Number of TV's to be mounted</FormLabel>
